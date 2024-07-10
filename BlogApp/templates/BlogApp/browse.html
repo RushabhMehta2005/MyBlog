@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+    All Blogs
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for msg in messages %}
+                    {{ msg }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div id="message-container" class="container mt-4 alert alert-info" style="display: none;"></div>
+        <div class="mb-3">
+            <a href="{% url 'BlogApp:add_blog' %}" class="btn btn-primary">Add a New Blog</a>
+            <a href="{% url 'MyAuth:home' %}" class="btn btn-secondary">Go to Home Page</a>
+        </div>
+
+        <div class="row">
+            {% for blog in blogs %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">'{{ blog.title }}' by {{ blog.author }}</h5>
+                            <p class="card-text"><strong>Created At:</strong> {{ blog.created_at | date:"F j, Y, h:i A" }}</p>
+                            <p class="card-text"><strong>Content:</strong> {{ blog.content }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary like-button" data-id="{{ blog.id }}">
+                                        <i class="bi bi-suit-heart-fill"></i>
+                                    </button>
+                                    <span class="ml-2"><span id="like-count-{{ blog.id }}">{{ blog.likes.count }}</span></span>
+                                </div>
+                                <div>
+                                    <a href="{% url 'BlogApp:edit_blog' blog.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                    <a href="{% url 'BlogApp:delete_blog' blog.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div id="comments-{{ blog.id }}">
+                                {% for comment in blog.comments.all %}
+                                    <p><strong>{{ comment.user.username }}:</strong> {{ comment.content }} ({{ comment.created_at | date:"F j, Y, h:i A" }})</p>
+                                {% endfor %}
+                            </div>
+                            {% if user.is_authenticated %}
+                                <form class="comment-form mt-2" data-id="{{ blog.id }}">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <textarea name="content" class="form-control" placeholder="Add a comment"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+                                </form>
+                            {% else %}
+                                <p><a href="{% url 'login' %}" class="text-primary">Log in</a> to add a comment.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <form id="csrf-form" style="display: none;">
+        {% csrf_token %}
+    </form>
+{% endblock %}

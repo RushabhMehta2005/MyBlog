@@ -1,0 +1,35 @@
+{% extends "MyAuth/base.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+ 
+
+{% block body %}
+    <div class="container mt-4">
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for msg in messages %}
+                    {{ msg }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form action="{% url 'MyAuth:login_user' %}" method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small id="{{ field.id_for_label }}Help" class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "MyAuth/base.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+ 
+
+{% block body %}
+    <div class="container mt-4">
+        <h3>Welcome to Our Blogging Platform!</h3>
+        
+        <p>Explore a world of diverse perspectives and engaging content created by our community of writers.</p>
+        
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for msg in messages %}
+                    {{ msg }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <ul class="list-unstyled">
+            {% if user.is_authenticated %}
+                <li class="mb-3"><a href="{% url 'BlogApp:browse' %}" class="btn btn-secondary">Browse Blogs</a></li>
+                <li class="mb-3"><a href="{% url 'MyAuth:logout_user' %}" class="btn btn-danger">Logout Here</a></li>
+            {% else %}
+                <li class="mb-3"><a href="{% url 'MyAuth:login_user' %}" class="btn btn-success">Login Here</a></li>
+                <li class="mb-3"><a href="{% url 'MyAuth:register_user' %}" class="btn btn-primary">Register Here</a></li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}
